@@ -101,7 +101,7 @@ jobs:
           set -e
           apk="app/build/outputs/apk/release/app-release.apk"
           test -f "$apk"
-          unzip -l "$apk" | grep -E 'assets/.*(index|bundle).*\\.js|index\\.android\\.bundle' >/dev/null
+          unzip -l "$apk" | grep -E 'assets/.*(index|bundle).*\.js|assets/.*\.bundle|index\.android\.bundle' >/dev/null
       - name: Upload Android APK
         uses: actions/upload-artifact@v4
         with:
