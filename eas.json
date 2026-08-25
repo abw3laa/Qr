@@ -6,6 +6,9 @@
   "build": {
     "preview": {
       "distribution": "internal",
+      "env": {
+        "COREPACK_INTEGRITY_KEYS": "0"
+      },
       "android": {
         "buildType": "apk"
       }
