@@ -15,7 +15,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  EXPO_PUBLIC_WEB_BASE_URL: ${{ vars.EXPO_PUBLIC_WEB_BASE_URL }}
+  EXPO_PUBLIC_WEB_BASE_URL: https://qrcard-jjdar3fj.manus.space
 
 jobs:
   validate:

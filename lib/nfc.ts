@@ -1,11 +1,17 @@
-import NfcManager, { Ndef, NfcTech } from "react-native-nfc-manager";
 import { Platform } from "react-native";
 
 export type NfcPayloadKind = "uri" | "text";
 
+type NfcModule = typeof import("react-native-nfc-manager");
+
+async function getNfcModule(): Promise<NfcModule> {
+  return import("react-native-nfc-manager");
+}
+
 export async function isNfcSupported(): Promise<boolean> {
   if (Platform.OS === "web") return false;
   try {
+    const { default: NfcManager } = await getNfcModule();
     return await NfcManager.isSupported();
   } catch {
     return false;
@@ -13,19 +19,20 @@ export async function isNfcSupported(): Promise<boolean> {
 }
 
 export async function writeNdefPayload(payload: string, kind: NfcPayloadKind): Promise<void> {
+  const { default: NfcManager, Ndef, NfcTech } = await getNfcModule();
   if (!(await isNfcSupported())) throw new Error("NFC_UNSUPPORTED");
   await NfcManager.start();
   try {
     await NfcManager.requestTechnology(NfcTech.Ndef);
     const record = kind === "uri" ? Ndef.uriRecord(payload) : Ndef.textRecord(payload, "ar");
-    const bytes = Ndef.encodeMessage([record]);
-    await NfcManager.ndefHandler.writeNdefMessage(bytes);
+    await NfcManager.ndefHandler.writeNdefMessage(Ndef.encodeMessage([record]));
   } finally {
     await NfcManager.cancelTechnologyRequest().catch(() => undefined);
   }
 }
 
 export async function readNdefPayload(): Promise<{ value: string; kind: NfcPayloadKind } | null> {
+  const { default: NfcManager, Ndef, NfcTech } = await getNfcModule();
   if (!(await isNfcSupported())) throw new Error("NFC_UNSUPPORTED");
   await NfcManager.start();
   try {
