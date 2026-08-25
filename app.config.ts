@@ -46,8 +46,8 @@ const config: ExpoConfig = {
   icon: "./assets/images/icon.png",
   scheme: env.scheme,
   userInterfaceStyle: "automatic",
-  // react-native-nfc-manager v3 currently targets the legacy architecture.
-  newArchEnabled: false,
+  // Reanimated 4 used by Expo SDK 54 requires the New Architecture.
+  newArchEnabled: true,
   ios: {
     supportsTablet: true,
     bundleIdentifier: env.iosBundleId,
