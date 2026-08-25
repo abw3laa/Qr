@@ -82,7 +82,8 @@ const config: ExpoConfig = {
   },
   web: {
     bundler: "metro",
-    output: "static",
+    // SPA output keeps dynamic public card slugs working on EAS Hosting.
+    output: "single",
     favicon: "./assets/images/favicon.png",
   },
   // ⬇️ أضف هذا القسم
