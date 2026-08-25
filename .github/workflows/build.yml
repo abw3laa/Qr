@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: qr-card-${{ github.workflow }}-${{ github.ref }}
@@ -98,3 +98,23 @@ jobs:
           name: qr-card-android-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
+
+  release:
+    name: Publish APK to GitHub Release
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch'
+    needs: [web, android]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download APK artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: qr-card-android-apk
+          path: release-assets
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          name: QR Card v1.0.${{ github.run_number }}
+          generate_release_notes: true
+          body: "نسخة Android تجريبية قابلة للتثبيت من مشروع QR Card."
+          files: release-assets/app-debug.apk

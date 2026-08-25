@@ -48,3 +48,6 @@
 - [ ] إزالة اعتماد APK على Expo/EAS token من workflow
 - [ ] بناء APK Android مباشرة على GitHub Runner عبر Expo prebuild وGradle
 - [ ] رفع app-debug.apk كـ artifact قابل للتنزيل من GitHub Actions
+
+- [ ] إنشاء GitHub Release تلقائياً بعد نجاح بناء APK
+- [ ] رفع app-debug.apk إلى Release مع artifact قابل للتنزيل
