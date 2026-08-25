@@ -69,7 +69,9 @@ jobs:
     name: Build installable Android APK with Gradle
     needs: validate
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 35
+    env:
+      GRADLE_OPTS: -Dorg.gradle.jvmargs=-Xmx4g -Dkotlin.daemon.jvm.options=-Xmx2g
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -92,7 +94,7 @@ jobs:
         run: CI=1 pnpm exec expo prebuild --platform android --no-install
       - name: Build standalone release APK
         working-directory: android
-        run: chmod +x gradlew && ./gradlew assembleRelease --no-daemon --stacktrace
+        run: chmod +x gradlew && ./gradlew assembleRelease --no-daemon --stacktrace --info
       - name: Verify JavaScript bundle is embedded
         working-directory: android
         run: |
