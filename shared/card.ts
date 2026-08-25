@@ -18,6 +18,7 @@ export type SocialLink = {
 
 export type DigitalCard = {
   id: string;
+  serverId?: number;
   slug: string;
   name: string;
   jobTitle: string;

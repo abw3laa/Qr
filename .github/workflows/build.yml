@@ -6,12 +6,6 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
-    inputs:
-      build_android:
-        description: "Build an Android APK with EAS"
-        required: true
-        default: false
-        type: boolean
 
 permissions:
   contents: read
@@ -19,6 +13,9 @@ permissions:
 concurrency:
   group: qr-card-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+
+env:
+  EXPO_PUBLIC_WEB_BASE_URL: ${{ vars.EXPO_PUBLIC_WEB_BASE_URL }}
 
 jobs:
   validate:
@@ -69,8 +66,7 @@ jobs:
           if-no-files-found: error
 
   android:
-    name: Build Android APK with EAS
-    if: github.event_name == 'workflow_dispatch' && inputs.build_android == true
+    name: Build installable Android APK with Gradle
     needs: validate
     runs-on: ubuntu-latest
     steps:
@@ -81,14 +77,26 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
       - name: Enable pnpm
         run: corepack enable
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: Build APK
-        uses: expo/expo-github-action@v8
+      - name: Generate native Android project
+        run: CI=1 pnpm exec expo prebuild --platform android --no-install
+      - name: Build debug APK
+        working-directory: android
+        run: chmod +x gradlew && ./gradlew assembleDebug --no-daemon --stacktrace
+      - name: Upload Android APK
+        uses: actions/upload-artifact@v4
         with:
-          eas-version: latest
-          token: ${{ secrets.EXPO_TOKEN }}
-      - name: Submit Android build to EAS
-        run: eas build --platform android --profile preview --non-interactive
+          name: qr-card-android-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
