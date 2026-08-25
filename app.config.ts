@@ -11,8 +11,8 @@ const bundleId =
   rawBundleId
     .replace(/[-_]/g, ".") // Replace hyphens/underscores with dots
     .replace(/[^a-zA-Z0-9.]/g, "") // Remove invalid chars
-    .replace(/\.+/g, ".") // Collapse consecutive dots
-    .replace(/^\.+|\.+$/g, "") // Trim leading/trailing dots
+    .replace(/.+/g, ".") // Collapse consecutive dots
+    .replace(/^.+|.+$/g, "") // Trim leading/trailing dots
     .toLowerCase()
     .split(".")
     .map((segment) => {
@@ -52,8 +52,8 @@ const config: ExpoConfig = {
     supportsTablet: true,
     bundleIdentifier: env.iosBundleId,
     "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
-      }
+      "ITSAppUsesNonExemptEncryption": false
+    }
   },
   android: {
     adaptiveIcon: {
@@ -84,6 +84,12 @@ const config: ExpoConfig = {
     bundler: "metro",
     output: "static",
     favicon: "./assets/images/favicon.png",
+  },
+  // ⬇️ أضف هذا القسم
+  extra: {
+    eas: {
+      projectId: "ed2c5f85-8a7b-48c7-8d1b-ddfcb62dd62f"
+    }
   },
   plugins: [
     "expo-router",
