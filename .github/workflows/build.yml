@@ -89,14 +89,21 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Generate native Android project
         run: CI=1 pnpm exec expo prebuild --platform android --no-install
-      - name: Build debug APK
+      - name: Build standalone release APK
         working-directory: android
-        run: chmod +x gradlew && ./gradlew assembleDebug --no-daemon --stacktrace
+        run: chmod +x gradlew && ./gradlew assembleRelease --no-daemon --stacktrace
+      - name: Verify JavaScript bundle is embedded
+        working-directory: android
+        run: |
+          set -e
+          apk="app/build/outputs/apk/release/app-release.apk"
+          test -f "$apk"
+          unzip -l "$apk" | grep -E 'assets/.*(index|bundle).*\\.js|index\\.android\\.bundle' >/dev/null
       - name: Upload Android APK
         uses: actions/upload-artifact@v4
         with:
           name: qr-card-android-apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          path: android/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
 
   release:
@@ -116,5 +123,5 @@ jobs:
           tag_name: v1.0.${{ github.run_number }}
           name: QR Card v1.0.${{ github.run_number }}
           generate_release_notes: true
-          body: "نسخة Android تجريبية قابلة للتثبيت من مشروع QR Card."
-          files: release-assets/app-debug.apk
+          body: "نسخة Android مستقلة قابلة للتثبيت من مشروع QR Card، وتتضمن حزمة JavaScript داخل APK."
+          files: release-assets/app-release.apk
