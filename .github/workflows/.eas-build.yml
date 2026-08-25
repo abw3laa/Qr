@@ -1,25 +1,13 @@
 name: Expo EAS Build
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - main
-    paths:
-      - "app/**"
-      - "components/**"
-      - "lib/**"
-      - "assets/**"
-      - "app.config.ts"
-      - "eas.json"
-      - "package.json"
-      - "pnpm-lock.yaml"
 
 jobs:
   build-android:
-    name: Build Android APK with Expo EAS
     runs-on: ubuntu-latest
-    timeout-minutes: 45
 
     steps:
       - name: Checkout
@@ -30,17 +18,14 @@ jobs:
         with:
           node-version: 22
 
-      - name: Enable pnpm
-        run: corepack enable
-
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build APK with EAS
+      - name: Setup Expo EAS
         uses: expo/expo-github-action@v8
         with:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
-      - name: Start EAS APK build
+      - name: Build APK
         run: eas build --platform android --profile preview --non-interactive
