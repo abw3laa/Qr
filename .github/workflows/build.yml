@@ -54,6 +54,8 @@ jobs:
         run: corepack enable
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+      - name: Prepare NativeWind web cache
+        run: mkdir -p node_modules/react-native-css-interop/.cache && touch node_modules/react-native-css-interop/.cache/web.css
       - name: Export web
         run: pnpm exec expo export --platform web
       - name: Upload web artifact
